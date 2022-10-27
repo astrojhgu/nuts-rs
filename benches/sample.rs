@@ -2,7 +2,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use nix::sched::{sched_setaffinity, CpuSet};
 use nix::unistd::Pid;
 use nuts_rs::math::{axpy, axpy_out, vector_dot};
-use nuts_rs::test_logps::NormalLogp;
+use nuts_rs::test_logps::{Maker,NormalLogp};
 use nuts_rs::{new_sampler, sample_parallel, Chain, JitterInitFunc, SamplerArgs};
 use rayon::ThreadPoolBuilder;
 
@@ -101,7 +101,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                 let seed = black_box(42);
                 let n_try_init = 10;
                 let (handle, channel) = sample_parallel(
-                    func,
+                    Maker{logp:func},
                     &mut init_point_func,
                     settings,
                     n_chains,

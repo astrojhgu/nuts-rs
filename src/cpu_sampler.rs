@@ -239,7 +239,7 @@ impl InitPointFunc for JitterInitFunc {
 }
 
 pub mod test_logps {
-    use crate::{cpu_potential::CpuLogpFunc, nuts::LogpError};
+    use crate::{cpu_potential::CpuLogpFunc, nuts::LogpError, CpuLogpFuncMaker};
     use multiversion::multiversion;
     use thiserror::Error;
 
@@ -260,6 +260,21 @@ pub mod test_logps {
     impl LogpError for NormalLogpError {
         fn is_recoverable(&self) -> bool {
             false
+        }
+    }
+
+    pub struct Maker {
+        pub logp: NormalLogp,
+    }
+    impl CpuLogpFuncMaker for Maker {
+        type Func = NormalLogp;
+
+        fn make_logp_func(&self) -> Result<Self::Func, Box<dyn std::error::Error + Send + Sync>> {
+            Ok(self.logp.clone())
+        }
+
+        fn dim(&self) -> usize {
+            self.logp.dim()
         }
     }
 
